@@ -4,4 +4,6 @@
     <string name="profile">Profile</string>
     <string name="home">Home</string>
     <string name="add_hackathon">Add hackathon</string>
+    <string name="hackathon_image">hackathon_image</string>
+    <string name="user_avatar">user_avatar</string>
 </resources>

@@ -18,17 +18,21 @@ class HackathonAdapter(
 
     inner class HackathonViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val hackathonImage: ImageView = itemView.findViewById(R.id.hackathon_image)
-        val hackathonName: TextView = itemView.findViewById(R.id.hackathon_title)
+        val hackathonDescription: TextView = itemView.findViewById(R.id.hackathon_description)
         val hackathonLocation: TextView = itemView.findViewById(R.id.hackathon_location)
+        val userAvatar: ImageView = itemView.findViewById(R.id.user_avatar)
+        val hackathonDateRange: TextView = itemView.findViewById(R.id.hackathon_date_range)
+        val userName: TextView = itemView.findViewById(R.id.user_name)
         // Add more views
 
         init {
-//            itemView.findViewById<View>(R.id.like_button).setOnClickListener {
-//                onLikeClick(hackathons[adapterPosition])
-//            }
-//            itemView.findViewById<View>(R.id.comment_button).setOnClickListener {
-//                onCommentClick(hackathons[adapterPosition])
-//            }
+            // Uncomment and use these lines when you have like and comment buttons in your layout
+            // itemView.findViewById<View>(R.id.like_button).setOnClickListener {
+            //     onLikeClick(hackathons[adapterPosition])
+            // }
+            // itemView.findViewById<View>(R.id.comment_button).setOnClickListener {
+            //     onCommentClick(hackathons[adapterPosition])
+            // }
         }
     }
 
@@ -40,15 +44,22 @@ class HackathonAdapter(
     override fun onBindViewHolder(holder: HackathonViewHolder, position: Int) {
         val hackathon = hackathons[position]
         // Bind data to views
-        holder.hackathonName.text = hackathon.description
+        holder.hackathonDescription.text = hackathon.description
         holder.hackathonLocation.text = hackathon.location
+        holder.hackathonDateRange.text = "${hackathon.startDate} - ${hackathon.endDate}"
+        holder.userName.text = "${hackathon.creator.firstName} ${hackathon.creator.firstName}"
 
-        if (hackathon.img.isNotEmpty()) {
-            Glide.with(holder.itemView.context)
-                .load(hackathon.img) // Load the first image for simplicity
-                .into(holder.hackathonImage)
-        }
-        // Load image into profileImg using an image loading library
+        Glide.with(holder.itemView.context)
+            .load(hackathon.img)
+            .placeholder(R.drawable.no_image) // Add a placeholder image in your drawable folder
+            .error(R.drawable.ic_error) // Add an error image in your drawable folder
+            .into(holder.hackathonImage)
+
+        Glide.with(holder.itemView.context)
+            .load(hackathon.creator.imgUrl)
+            .placeholder(R.drawable.profile_icon) // Add a placeholder image in your drawable folder
+            .error(R.drawable.ic_error) // Add an error image in your drawable folder
+            .into(holder.userAvatar)
     }
 
     override fun getItemCount(): Int = hackathons.size

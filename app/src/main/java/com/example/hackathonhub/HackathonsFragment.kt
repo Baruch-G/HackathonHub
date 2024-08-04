@@ -40,8 +40,8 @@ class HackathonsFragment: Fragment() {
         recyclerView.adapter = hackathonAdapter
     }
     private fun getMockHackathons(): List<Hackathon> {
-        val user1 = User("https://example.com/user1.jpg", "John", "Doe", "john.doe@example.com", "1")
-        val user2 = User("https://example.com/user2.jpg", "Jane", "Smith", "jane.smith@example.com", "2")
+        val user1 = User("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcgxTUgjEPOgl2eTPt5jvKCGNsd6w-SYf2nw&s", "John", "Doe", "john.doe@example.com", "1")
+        val user2 = User("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ06rdjbFPrSlgcWWFzHlIr_1Mi41ZHIyxAYGDsZGunz2tqLQfi7cjKXos0YyqFIAaHYnM&usqp=CAU", "Jane", "Smith", "jane.smith@example.com", "2")
 
         val comment1 = Comment("Great event!", user1, "1")
         val comment2 = Comment("Looking forward to it.", user2, "2")
