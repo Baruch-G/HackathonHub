@@ -17,7 +17,7 @@ class HackathonAdapter(
 ) : RecyclerView.Adapter<HackathonAdapter.HackathonViewHolder>() {
 
     inner class HackathonViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val profileImg: ImageView = itemView.findViewById(R.id.hackathon_image)
+        val hackathonImage: ImageView = itemView.findViewById(R.id.hackathon_image)
         val hackathonName: TextView = itemView.findViewById(R.id.hackathon_title)
         val hackathonLocation: TextView = itemView.findViewById(R.id.hackathon_location)
         // Add more views
@@ -42,6 +42,12 @@ class HackathonAdapter(
         // Bind data to views
         holder.hackathonName.text = hackathon.description
         holder.hackathonLocation.text = hackathon.location
+
+        if (hackathon.img.isNotEmpty()) {
+            Glide.with(holder.itemView.context)
+                .load(hackathon.img) // Load the first image for simplicity
+                .into(holder.hackathonImage)
+        }
         // Load image into profileImg using an image loading library
     }
 

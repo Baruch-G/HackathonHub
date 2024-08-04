@@ -23,6 +23,6 @@ data class Hackathon(
     val endDate: String,
     val comments: List<Comment>,
     val likes: List<String>,
-    val imgs: List<String>,
+    val img: String,
     val dateCreated: String
 )
