@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_hackathons"
+        android:icon="@drawable/hackathon_list_icon"
+        android:title="@string/hackathons" />
+    <item
+        android:id="@+id/nav_profile"
+        android:icon="@drawable/profile_icon"
+        android:title="@string/profile" />
+    <item
+        android:id="@+id/nav_add_hackathon"
+        android:icon="@drawable/add_hackathon_icon"
+        android:title="add hackathon" />
+</menu>
