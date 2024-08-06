@@ -11,7 +11,7 @@ data class User(
 data class Comment(
     val text: String,
     val user: User,
-    val id: String
+    val _id: String
 )
 
 data class Hackathon(
@@ -23,6 +23,6 @@ data class Hackathon(
     val endDate: String,
     val comments: List<Comment>,
     val likes: List<String>,
-    val img: String,
+    val imgs: List<String>,
     val dateCreated: String
 )

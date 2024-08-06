@@ -6,4 +6,18 @@
     <string name="add_hackathon">Add hackathon</string>
     <string name="hackathon_image">hackathon_image</string>
     <string name="user_avatar">user_avatar</string>
+    <string name="description">Write some details</string>
+    <string name="location">location</string>
+    <string name="start_date">Start Date</string>
+    <string name="end_date">End Date</string>
+    <string name="profile_image">Proffile Image</string>
+    <string name="select_image">Select image</string>
+    <string name="location_icon">Location icon</string>
+    <string name="calendar_icon">calendar icon</string>
+    <string name="like">like</string>
+    <string name="comment">Comment</string>
+    <string name="login">Login</string>
+    <string name="username">username</string>
+    <string name="password">password</string>
+    <string name="register_here">register here</string>
 </resources>
