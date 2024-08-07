@@ -36,6 +36,6 @@ interface ApiService {
         @Body request: LoginRequest
     ): Call<LoginResponse>
 
-    @POST("hackathons")
+    @POST("hackathon")
     fun addHackathon(@Body hackathon: AddHackathonRequest): Call<Void>
 }

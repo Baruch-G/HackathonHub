@@ -37,7 +37,6 @@ class LoginActivity : AppCompatActivity() {
             .build()
         signInLauncher.launch(signInIntent)
     }
-
     private fun onSignInResult(result: FirebaseAuthUIAuthenticationResult) {
         val response = result.idpResponse
         if (result.resultCode == RESULT_OK) {
@@ -62,6 +61,8 @@ class LoginActivity : AppCompatActivity() {
         } else {
             // Sign in failed
             // Handle error
+            val errorCode = response?.error?.errorCode
+            Log.e("SignInError", "Sign-in failed: Error code $errorCode")
         }
     }
 }

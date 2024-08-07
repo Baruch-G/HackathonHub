@@ -69,7 +69,7 @@ class HackathonAdapter(
         holder.hackathonLocation.text = hackathon.location
         holder.hackathonDateRange.text = dateRange
         holder.userName.text = "${hackathon.creator.firstName} ${hackathon.creator.lastName}"
-        holder.likeCount.text = "${hackathon.likes.size} Likes"
+        holder.likeCount.text = "${hackathon.likes.size}"
 
         // Load images
         Glide.with(holder.itemView.context)
@@ -79,8 +79,8 @@ class HackathonAdapter(
             .into(holder.hackathonImage)
 
         Glide.with(holder.itemView.context)
-            .load(hackathon.creator.imgUrl)
-            .placeholder(R.drawable.profile_icon)
+            .load("https://lh3.googleusercontent.com/ogw/AF2bZygEa2-X4saKIzV77knVNUldkA89-XQnQGgyTttUw2uOXww=s32-c-mo" ?: hackathon.creator.imgUrl)
+            .placeholder(R.drawable.no_image)
             .error(R.drawable.ic_error)
             .into(holder.userAvatar)
     }

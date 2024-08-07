@@ -47,7 +47,7 @@ class HackathonsFragment : Fragment() {
                     hackathons,
                     onLikeClick = { hackathon -> handleLikeClick(hackathon) },
                     onCommentClick = { hackathon -> /* Handle comment */ },
-                    onDeleteClick = { hackathon -> /* Handle delete */ }
+                    onDeleteClick = { hackathon -> handleDeleteClick(hackathon) }
                 )
                 recyclerView.adapter = hackathonAdapter
             } catch (e: Exception) {
@@ -111,5 +111,35 @@ class HackathonsFragment : Fragment() {
         }
     }
 
+    private fun handleDeleteClick(hackathon: Hackathon) {
+        lifecycleScope.launch {
+            try {
+                val call = RetrofitClient.apiService.deleteHackathon(hackathon._id)
+                call.enqueue(object : Callback<Void> {
+                    override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                        if (response.isSuccessful) {
+                            // Remove from list and update adapter
+                            val updatedList = hackathonAdapter.hackathons.toMutableList()
+                            updatedList.removeAll { it._id == hackathon._id }
+                            hackathonAdapter = HackathonAdapter(
+                                updatedList,
+                                onLikeClick = { updatedHackathon -> handleLikeClick(updatedHackathon) },
+                                onCommentClick = { updatedHackathon -> /* Handle comment */ },
+                                onDeleteClick = { updatedHackathon -> handleDeleteClick(updatedHackathon) }
+                            )
+                            recyclerView.adapter = hackathonAdapter
+                        } else {
+                            Log.d("HA - ", "Error deleting hackathon: ${response.message()}")
+                        }
+                    }
 
+                    override fun onFailure(call: Call<Void>, t: Throwable) {
+                        Log.d("HA - ", "Failure: ${t.message}")
+                    }
+                })
+            } catch (e: Exception) {
+                Log.d("HA - ", "Exception: ${e.message}")
+            }
+        }
+    }
 }

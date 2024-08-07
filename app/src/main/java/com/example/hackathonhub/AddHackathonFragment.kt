@@ -34,7 +34,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
-import retrofit2.Retrofit
+
 class AddHackathonFragment : Fragment() {
 
     private lateinit var etDescription: EditText
@@ -169,18 +169,18 @@ class AddHackathonFragment : Fragment() {
     }
 
     private fun addHackathon(description: String, location: String, startDate: String, endDate: String, selectedImageUri: Uri?) {
-        val userId = getCurrentUserId(requireContext()) ?: "defaultUserId"
+        val userId = getCurrentUserId(requireContext()) ?: "66b274239b1e43d1aee7e812"
 
         val hackathon = AddHackathonRequest(
             creator = userId,
             location = location,
-            startDate = SimpleDateFormat("yyyy-MM-dd", Locale.US).parse(startDate) ?: Date(),
-            endDate = SimpleDateFormat("yyyy-MM-dd", Locale.US).parse(endDate) ?: Date(),
+            startDate = "2024-08-07T08:21:16.142Z",
+            endDate = "2024-08-07T08:21:16.142Z",
             description = description,
             comments = listOf(), // Initialize as needed
-            imgs = listOf(), // Handle image uploads if necessary
+            imgs  = arrayOf("https://t4.ftcdn.net/jpg/01/43/23/83/360_F_143238306_lh0ap42wgot36y44WybfQpvsJB5A1CHc.jpg"),
             likes = listOf(),
-            dateCreated = Date()
+            dateCreated = "2024-08-07T08:21:16.142Z"
         )
 
         lifecycleScope.launch {
