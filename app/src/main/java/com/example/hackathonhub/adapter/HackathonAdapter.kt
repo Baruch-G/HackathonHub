@@ -14,9 +14,10 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 class HackathonAdapter(
-    private val hackathons: List<Hackathon>,
+    public val hackathons: List<Hackathon>,
     private val onLikeClick: (Hackathon) -> Unit,
-    private val onCommentClick: (Hackathon) -> Unit
+    private val onCommentClick: (Hackathon) -> Unit,
+    private val onDeleteClick: (Hackathon) -> Unit
 ) : RecyclerView.Adapter<HackathonAdapter.HackathonViewHolder>() {
 
     inner class HackathonViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -26,16 +27,20 @@ class HackathonAdapter(
         val userAvatar: ImageView = itemView.findViewById(R.id.user_avatar)
         val hackathonDateRange: TextView = itemView.findViewById(R.id.hackathon_date_range)
         val userName: TextView = itemView.findViewById(R.id.user_name)
+        val likeCount: TextView = itemView.findViewById(R.id.like_count)
 
-        // Uncomment and use these lines when you have like and comment buttons in your layout
-        // init {
-        //     itemView.findViewById<View>(R.id.like_button).setOnClickListener {
-        //         onLikeClick(hackathons[adapterPosition])
-        //     }
-        //     itemView.findViewById<View>(R.id.comment_button).setOnClickListener {
-        //         onCommentClick(hackathons[adapterPosition])
-        //     }
-        // }
+        init {
+            itemView.findViewById<View>(R.id.like_button).setOnClickListener {
+                val hackathon = hackathons[adapterPosition]
+                onLikeClick(hackathon)
+            }
+            itemView.findViewById<View>(R.id.comment_button).setOnClickListener {
+                onCommentClick(hackathons[adapterPosition])
+            }
+            itemView.findViewById<View>(R.id.delete_button).setOnClickListener {
+                onDeleteClick(hackathons[adapterPosition])
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HackathonViewHolder {
@@ -64,18 +69,19 @@ class HackathonAdapter(
         holder.hackathonLocation.text = hackathon.location
         holder.hackathonDateRange.text = dateRange
         holder.userName.text = "${hackathon.creator.firstName} ${hackathon.creator.lastName}"
+        holder.likeCount.text = "${hackathon.likes.size} Likes"
 
         // Load images
         Glide.with(holder.itemView.context)
             .load(hackathon.imgs.firstOrNull() ?: "https://images.pexels.com/photos/2990605/pexels-photo-2990605.jpeg?auto=compress&cs=tinysrgb&w=600")
-            .placeholder(R.drawable.no_image) // Add a placeholder image in your drawable folder
-            .error(R.drawable.no_image) // Add an error image in your drawable folder
+            .placeholder(R.drawable.no_image)
+            .error(R.drawable.no_image)
             .into(holder.hackathonImage)
 
         Glide.with(holder.itemView.context)
             .load(hackathon.creator.imgUrl)
-            .placeholder(R.drawable.profile_icon) // Add a placeholder image in your drawable folder
-            .error(R.drawable.ic_error) // Add an error image in your drawable folder
+            .placeholder(R.drawable.profile_icon)
+            .error(R.drawable.ic_error)
             .into(holder.userAvatar)
     }
 

@@ -7,17 +7,19 @@ import android.preference.PreferenceManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import com.example.hackathonhub.R
 import com.example.hackathonhub.ui.LoginActivity
+import com.google.firebase.auth.FirebaseAuth
 import com.squareup.picasso.Picasso
 
 class ProfileFragment : Fragment() {
 
     private lateinit var profileImageView: ImageView
     private lateinit var usernameTextView: TextView
+    private lateinit var logoutButton: Button
     private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreateView(
@@ -27,7 +29,8 @@ class ProfileFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_profile, container, false)
 
         profileImageView = view.findViewById(R.id.user_profile_img)
-        usernameTextView = view.findViewById(R.id.tv_username) // Make sure to add a TextView for username in your layout
+        usernameTextView = view.findViewById(R.id.tv_username)
+        logoutButton = view.findViewById(R.id.btn_logout)
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
 
@@ -37,21 +40,23 @@ class ProfileFragment : Fragment() {
             navigateToLogin()
         }
 
+        logoutButton.setOnClickListener {
+            logoutUser()
+        }
+
         return view
     }
 
     private fun isUserLoggedIn(): Boolean {
-        // Check if user is logged in, e.g., by checking if a token exists
         return sharedPreferences.getString("user_token", null) != null
     }
 
     private fun displayUserDetails() {
-        // Get user details from shared preferences or API
         val username = sharedPreferences.getString("username", "User")
         val profileImageUrl = sharedPreferences.getString("profile_image_url", "")
 
         usernameTextView.text = username
-        if (profileImageUrl != null && profileImageUrl.isNotEmpty()) {
+        if (!profileImageUrl.isNullOrEmpty()) {
             Picasso.get().load(profileImageUrl).into(profileImageView)
         } else {
             profileImageView.setImageResource(R.drawable.profile_icon) // Replace with your default image
@@ -62,5 +67,14 @@ class ProfileFragment : Fragment() {
         val intent = Intent(requireContext(), LoginActivity::class.java)
         startActivity(intent)
         requireActivity().finish()
+    }
+
+    private fun logoutUser() {
+        FirebaseAuth.getInstance().signOut()
+        val editor = sharedPreferences.edit()
+        editor.clear()
+        editor.apply()
+
+        navigateToLogin()
     }
 }

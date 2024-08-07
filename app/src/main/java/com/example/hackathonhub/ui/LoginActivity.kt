@@ -3,86 +3,65 @@ package com.example.hackathonhub.ui
 import android.content.Intent
 import android.os.Bundle
 import android.preference.PreferenceManager
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.example.hackathonhub.MainActivity
-import com.example.hackathonhub.models.LoginResponse
-import com.example.hackathonhub.api.ApiService
-import com.example.hackathonhub.api.LoginRequest
-import com.example.hackathonhub.api.RetrofitInstance
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import com.example.hackathonhub.R
+import com.firebase.ui.auth.AuthUI
+import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
+import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
+import com.google.firebase.auth.FirebaseAuth
 
 class LoginActivity : AppCompatActivity() {
 
-    private lateinit var etUsername: EditText
-    private lateinit var etPassword: EditText
-    private lateinit var btnLogin: Button
-    private lateinit var tvRegister: TextView
+    private val signInLauncher = registerForActivityResult(
+        FirebaseAuthUIActivityResultContract()
+    ) { res ->
+        this.onSignInResult(res)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
-
-        etUsername = findViewById(R.id.et_username)
-        etPassword = findViewById(R.id.et_password)
-        btnLogin = findViewById(R.id.btn_login)
-        tvRegister = findViewById(R.id.tv_register)
-
-        btnLogin.setOnClickListener {
-            performLogin()
-        }
-
-        tvRegister.setOnClickListener {
-            val intent = Intent(this, RegisterActivity::class.java)
-            startActivity(intent)
-        }
-    }
-    private fun performLogin() {
-        val username = etUsername.text.toString().trim()
-        val password = etPassword.text.toString().trim()
-
-        if (username.isEmpty() || password.isEmpty()) {
-            // Show error message
-            return
-        }
-
-        val apiService = RetrofitInstance.getRetrofitInstance().create(ApiService::class.java)
-        val call = apiService.login(LoginRequest(username, password))
-
-        call.enqueue(object : Callback<LoginResponse> {
-            override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
-                if (response.isSuccessful) {
-                    val loginResponse = response.body()
-                    if (loginResponse?.user != null) {
-                        // Save user session
-                        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this@LoginActivity)
-                        val editor = sharedPreferences.edit()
-                        editor.putString("user_token", loginResponse.accessToken)
-                        editor.putString("username", username)
-                        editor.putString("profile_image_url", loginResponse.user.imgUrl)
-                        editor.apply()
-
-                        // Navigate to main activity
-                        val intent = Intent(this@LoginActivity, MainActivity::class.java)
-                        startActivity(intent)
-                        finish()
-                    } else {
-                        // Show login failed message
-                    }
-                } else {
-                    // Show server error message
-                }
-            }
-
-            override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-                // Show network error message
-            }
-        })
+        createSignInIntent()
     }
 
+    private fun createSignInIntent() {
+        val providers = arrayListOf(
+            AuthUI.IdpConfig.EmailBuilder().build(),
+            AuthUI.IdpConfig.GoogleBuilder().build()
+        )
+
+        val signInIntent = AuthUI.getInstance()
+            .createSignInIntentBuilder()
+            .setAvailableProviders(providers)
+            .build()
+        signInLauncher.launch(signInIntent)
+    }
+
+    private fun onSignInResult(result: FirebaseAuthUIAuthenticationResult) {
+        val response = result.idpResponse
+        if (result.resultCode == RESULT_OK) {
+            val user = FirebaseAuth.getInstance().currentUser
+            if (user != null) {
+                val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+                val editor = sharedPreferences.edit()
+                editor.putString("user_token", user.uid)
+                editor.putString("username", user.displayName)
+                editor.putString("profile_image_url", user.photoUrl?.toString())
+                editor.apply()
+
+                Log.d("Ha - ", user.photoUrl?.toString() ?: "")
+                Log.d("Ha - ", user.uid.toString() ?: "")
+                Log.d("Ha - ", user.displayName.toString() ?: "")
+
+                val intent = Intent(this, MainActivity::class.java)
+                intent.putExtra("SELECTED_TAB", R.id.nav_hackathons) // Pass the selected tab ID
+                startActivity(intent)
+                finish()
+            }
+        } else {
+            // Sign in failed
+            // Handle error
+        }
+    }
 }

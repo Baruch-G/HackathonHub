@@ -20,4 +20,6 @@
     <string name="username">username</string>
     <string name="password">password</string>
     <string name="register_here">register here</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
 </resources>

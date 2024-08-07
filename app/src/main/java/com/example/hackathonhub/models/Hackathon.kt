@@ -15,14 +15,14 @@ data class Comment(
 )
 
 data class Hackathon(
-    val id: String,
+    val _id: String,
     val creator: User,
     val location: String,
     val description: String,
     val startDate: String,
     val endDate: String,
     val comments: List<Comment>,
-    val likes: List<String>,
+    var likes: List<String>,
     val imgs: List<String>,
     val dateCreated: String
 )

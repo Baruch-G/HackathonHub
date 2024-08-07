@@ -1,11 +1,14 @@
 package com.example.hackathonhub
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,13 +18,23 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import com.example.hackathonhub.api.RetrofitClient
+import com.example.hackathonhub.models.AddHackathonRequest
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointForward
 import com.google.android.material.datepicker.MaterialDatePicker
+import kotlinx.coroutines.launch
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import java.io.File
+import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
-
+import retrofit2.Retrofit
 class AddHackathonFragment : Fragment() {
 
     private lateinit var etDescription: EditText
@@ -61,10 +74,15 @@ class AddHackathonFragment : Fragment() {
 
         btnAddHackathon.setOnClickListener {
             if (validateInput()) {
-                // Here you can call your function to add a hackathon.
-                // Assuming you have a function `addHackathon` in your API:
-                // addHackathon(description, location, startDate, endDate, selectedImageUri)
-                Toast.makeText(requireContext(), "Hackathon added successfully!", Toast.LENGTH_SHORT).show()
+                val description = etDescription.text.toString().trim()
+                val location = etLocation.text.toString().trim()
+                val startDate = etStartDate.text.toString().trim()
+                val endDate = etEndDate.text.toString().trim()
+                val selectedImageUri = (ivProfileImage.drawable as? BitmapDrawable)?.bitmap?.let { bitmap ->
+                    getImageUri(requireContext(), bitmap)
+                }
+
+                addHackathon(description, location, startDate, endDate, selectedImageUri)
             }
         }
 
@@ -106,6 +124,14 @@ class AddHackathonFragment : Fragment() {
         datePicker.show(childFragmentManager, "DATE_PICKER")
     }
 
+    private fun getImageUri(context: Context, bitmap: Bitmap): Uri {
+        val file = File(context.cacheDir, "image.jpg")
+        FileOutputStream(file).use {
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, it)
+        }
+        return FileProvider.getUriForFile(context, "com.example.hackathonhub.fileprovider", file)
+    }
+
     private fun validateInput(): Boolean {
         val description = etDescription.text.toString().trim()
         val location = etLocation.text.toString().trim()
@@ -136,4 +162,47 @@ class AddHackathonFragment : Fragment() {
         }
         return isValid
     }
+
+    fun getCurrentUserId(context: Context): String? {
+        val sharedPreferences = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        return sharedPreferences.getString("user_id", null)
+    }
+
+    private fun addHackathon(description: String, location: String, startDate: String, endDate: String, selectedImageUri: Uri?) {
+        val userId = getCurrentUserId(requireContext()) ?: "defaultUserId"
+
+        val hackathon = AddHackathonRequest(
+            creator = userId,
+            location = location,
+            startDate = SimpleDateFormat("yyyy-MM-dd", Locale.US).parse(startDate) ?: Date(),
+            endDate = SimpleDateFormat("yyyy-MM-dd", Locale.US).parse(endDate) ?: Date(),
+            description = description,
+            comments = listOf(), // Initialize as needed
+            imgs = listOf(), // Handle image uploads if necessary
+            likes = listOf(),
+            dateCreated = Date()
+        )
+
+        lifecycleScope.launch {
+            try {
+                val call = RetrofitClient.apiService.addHackathon(hackathon)
+                call.enqueue(object : Callback<Void> {
+                    override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                        if (response.isSuccessful) {
+                            Toast.makeText(requireContext(), "Hackathon added successfully!", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(requireContext(), "Failed to add hackathon: ${response.message()}", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+
+                    override fun onFailure(call: Call<Void>, t: Throwable) {
+                        Toast.makeText(requireContext(), "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                    }
+                })
+            } catch (e: Exception) {
+                Log.d("AddHackathonFragment", "Exception: ${e.message}")
+            }
+        }
+    }
+
 }

@@ -105,25 +105,65 @@
         android:outlineProvider="background" />
 
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_marginBottom="12dp">
 
-        <ImageView
-            android:src="@drawable/heart_icon"
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="start">
+            <TextView
+                android:id="@+id/like_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/black"
+                android:textSize="14sp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="0" />
+            <ImageView
+                android:id="@+id/like_button"
+                android:src="@drawable/heart_icon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:contentDescription="@string/like" />
 
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:contentDescription="@string/like" />
+            <ImageView
+                android:id="@+id/comment_button"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/comment_icon"
+                android:contentDescription="@string/comment" />
+        </LinearLayout>
 
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/comment_icon"
-            android:contentDescription="@string/comment" />
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:src="@drawable/edit_icon"
+                android:layout_width="40dp"
+                android:id="@+id/edit_button"
+                android:layout_height="40dp"
+                android:contentDescription="@string/edit" />
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:id="@+id/delete_button"
+                android:src="@drawable/delete_icon"
+                android:contentDescription="@string/delete" />
+        </LinearLayout>
 
     </LinearLayout>
 </LinearLayout>
